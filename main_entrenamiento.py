@@ -1,15 +1,18 @@
-import os
-import datetime
+import time
+import sys
 
-# Usamos rutas absolutas para que Cron no se pierda
-ruta_directorio = os.path.dirname(os.path.abspath(__file__))
-ruta_log = os.path.join(ruta_directorio, "logs", "cron_registro.log")
-
-def entrenar_modelo():
-    ahora = datetime.datetime.now()
-    with open(ruta_log, "a") as f:
-        f.write(f"IA Reentrenada con éxito - Timestamp: {ahora}\n")
-    print("Proceso completado.")
+def training_demo():
+    print("--- INICIANDO ENTRENAMIENTO DE MODELO IA (Purdue Exp. 1979) ---")
+    tasks = ["Cargando datasets", "Optimizando neuronas", "Calculando pesos", "Guardando checkpoint"]
+    
+    for task in tasks:
+        print(f"{task}...", end="", flush=True)
+        for _ in range(10):
+            time.sleep(0.2)
+            print(".", end="", flush=True)
+        print(" ¡OK!")
+    
+    print("--- ENTRENAMIENTO COMPLETADO CON ÉXITO ---")
 
 if __name__ == "__main__":
-    entrenar_modelo()
+    training_demo()

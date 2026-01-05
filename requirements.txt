@@ -1,0 +1,7 @@
+# Dependencias del proyecto de IA
+datetime
+os-sys
+# En una IA real aquí irían:
+# scikit-learn
+# pandas
+# numpy

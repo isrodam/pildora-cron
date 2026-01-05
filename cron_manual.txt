@@ -1,0 +1,7 @@
+# Iniciar Cron: sudo service cron start
+
+# Lanzar Demo: bash setup_cron.sh
+
+# Ver en vivo: tail -f logs/ejecucion.log
+
+# Limpiar Cron: crontab -r (esto borra todas las tareas para cuando acabes).
