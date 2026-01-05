@@ -1,7 +1,21 @@
-# Iniciar Cron: sudo service cron start
+# 1 Iniciar Cron: sudo service cron start
+# 2 Lanzar Demo: bash setup_cron.sh
+# 3 Ver en vivo: tail -f logs/ejecucion.log
+# 4 Limpiar Cron: crontab -r (esto borra todas las tareas para cuando acabemos).
 
-# Lanzar Demo: bash setup_cron.sh
-
-# Ver en vivo: tail -f logs/ejecucion.log
-
-# Limpiar Cron: crontab -r (esto borra todas las tareas para cuando acabes).
+🔴 Emergencia 1: VS Code se abre en Windows (No se ve "WSL: Ubuntu")
+Síntoma: Escribimos crontab -e en la terminal y dice "comando no reconocido" o "command not found".
+•	Solución Rápida:
+1.	Mirar la esquina inferior izquierda. Si no pone WSL, hacer clic en el botón azul/verde ><.
+2.	En el menú que se despliega arriba, seleccionar: "Connect to WSL".
+3.	VS Code se recargará solo. ¡Listo! Ya estamos en Linux.
+🔴 Emergencia 2: El Cronjob no se ejecuta (El log no crece)
+Síntoma: Pasa el minuto y el archivo ejecucion.log sigue vacío.
+•	Solución Rápida: El "motor" (servicio) está apagado. Ejecutar esto:
+sudo service cron start
+(Si pide contraseña, ponerla rápido. Luego volver a lanzar bash setup_cron.sh).
+🔴 Emergencia 3: Los mensajes salen duplicados o triplicados
+Síntoma: El log escribe 3 o 4 líneas cada minuto.
+•	Solución Rápida: Se han acumulado tareas viejas. Limpiar todo y relanzar:
+crontab -r
+bash setup_cron.sh
