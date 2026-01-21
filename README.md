@@ -15,7 +15,7 @@ Cron es una herramienta nativa de Linux. Si usas Windows, debes habilitar WSL:
 1.	Instalación: Abre PowerShell como administrador y ejecuta: wsl --install.
 2.	Reinicio: Es obligatorio reiniciar el PC para que Windows active las funciones de virtualización.
 3.	Vincular carpetas: En la terminal de Ubuntu, tus archivos de Windows están en /mnt/c/. Navega a tu carpeta así:
-cd /mnt/c/Documents/projects/prueba_cron     <- Ejemplo de ruta
+cd /mnt/c/Documents/projects/prueba_cron
 4.	VS Code: Desde esa misma terminal, escribe code . para abrir el editor vinculado al entorno Linux.
 B. Opción Alternativa: WebVM.io (Sin Instalación)
 Si no puedes instalar WSL, usa webvm.io, un Linux que corre en el navegador.
@@ -81,3 +81,5 @@ Al terminar la práctica, es responsabilidad del desarrollador dejar el sistema 
 4.	Limpiar logs: Si el archivo de log es muy grande, vacíalo con > cron.log.
 ________________________________________
 Documentación elaborada por el Equipo de Investigadores ☺
+
+
