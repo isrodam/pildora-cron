@@ -1,85 +1,73 @@
-🚀 Guía Maestra: Automatización con Cron y Diagnóstico de Sistemas (Caso Autopsia)
-Este repositorio ha sido diseñado para enseñar cómo programar tareas automáticas en Linux utilizando Cron. A diferencia de una guía convencional, aquí aplicaremos una "autopsia" técnica para entender por qué fallan los scripts cuando se automatizan y cómo solucionarlo profesionalmente.
+🚀 Guia: Automatización con Cron y Resolución de Conflictos (Caso Autopsia)
+Esta guía documenta el flujo de trabajo para automatizar procesos mediante Cron en entornos Linux. No es solo un manual de uso, sino una investigación sobre por qué los scripts suelen "desaparecer" en producción y cómo solucionarlo profesionalmente.
+📋 1. Estructura de la Práctica: Dos Escenarios
+Para entender el sistema, hemos diferenciado dos proyectos en este repositorio:
+•	Proyecto prueba_cron (El Laboratorio): Donde reproducimos el fallo de rutas relativas y el archivo "fantasma".
+•	Proyecto pildora-cron (La Solución): Donde aplicamos la lógica de rutas absolutas dinámicas y gestión de errores avanzada.
 ________________________________________
-📂 1. Estructura de la Investigación: Dos Proyectos
-Para que el aprendizaje sea real, hemos dividido el trabajo en dos carpetas/proyectos que veréis en el repositorio:
-1.	prueba_cron (El Laboratorio de Errores): * Objetivo: Experimentar con el fallo. Aquí usamos rutas relativas para demostrar cómo Cron "pierde" los archivos.
-o	Resultado: El archivo no aparece en la carpeta del proyecto, sino en la carpeta raíz del usuario (/home/usuario).
-2.	pildora-cron (La Solución Final):
-o	Objetivo: Implementar un código robusto.
-o	Resultado: Uso de rutas absolutas y gestión de logs de errores (2>&1), garantizando que el sistema sea estable y transparente.
+🛠 2. Preparación del Entorno (WSL y WebVM)
+Opción A: Windows Subsystem for Linux (WSL)
+1.	Instalación: Abre PowerShell (Administrador) y ejecuta: wsl --install. Es obligatorio reiniciar el ordenador.
+2.	Ruta de trabajo: En la terminal de Ubuntu, tus archivos de Windows se encuentran en el punto de montaje /mnt/c/. Navega a tu carpeta de proyecto:
+cd /mnt/c/Documents/projects/prueba_cron        <- es un ejemplo de ruta
+3.	VS Code: Desde la terminal, escribe code . para abrir el editor con el kernel de Linux activo.
+4.	Servicio: Cron no siempre arranca solo en WSL. Actívalo con: sudo service cron start.
+Opción B: Alternativa Web (WebVM.io)
+Si no puedes instalar WSL, usa webvm.io, un Linux virtual en el navegador.
+•	Comando de inicio: Si service cron start falla, usa: /etc/init.d/cron start.
+•	Simulación de error: Ejecuta cd /tmp && python3 /home/user/entrenamiento_modelo.py para ver cómo el archivo se crea en la carpeta temporal y no en la tuya.
 ________________________________________
-🛠 2. Configuración del Entorno de Trabajo
-A. Opción Preferida: Windows Subsystem for Linux (WSL)
-Cron es una herramienta nativa de Linux. Si usas Windows, debes habilitar WSL:
-1.	Instalación: Abre PowerShell como administrador y ejecuta: wsl --install.
-2.	Reinicio: Es obligatorio reiniciar el PC para que Windows active las funciones de virtualización.
-3.	Vincular carpetas: En la terminal de Ubuntu, tus archivos de Windows están en /mnt/c/. Navega a tu carpeta así:
-cd /mnt/c/Documents/projects/prueba_cron
-4.	VS Code: Desde esa misma terminal, escribe code . para abrir el editor vinculado al entorno Linux.
-B. Opción Alternativa: WebVM.io (Sin Instalación)
-Si no puedes instalar WSL, usa webvm.io, un Linux que corre en el navegador.
-•	Limitación Crítica: Al ser un entorno "sandbox", no tienes permisos de administrador (sudo).
-•	Comando de emergencia: Si el servicio no arranca, intenta: /etc/init.d/cron start.
-•	Simulación: Para ver el efecto de las rutas, ejecuta: cd /tmp && python3 /home/user/entrenamiento_modelo.py. Verás que el archivo se crea en tmp y no en tu carpeta.
-________________________________________
-💻 3. Análisis Detallado del Código (entrenamiento_modelo.py)
-Vamos a explicar el código de la "Solución Final". Este script simula el entrenamiento de una IA y guarda un registro del éxito.
+💻 3. Análisis del Código: Entrenamiento de IA
+Fase 1: El Script con "Trampa" (entrenamiento_modelo.py)
+Este script falla al automatizarse porque confía en la ubicación del usuario:
 Python
-import datetime
+# --- ERROR DE RUTAS RELATIVAS ---
+# Al automatizar con Cron, este script se ejecuta desde /home/usuario.
+# El archivo 'modelo_ia.txt' NO se creará en esta carpeta, se irá al Home.
+with open("modelo_ia.txt", "a") as f:
+    f.write(log_entry)
+Fase 2: El Script Corregido (entrenamiento_modelo_ok.py)
+Utilizamos la librería os para obligar a Python a encontrar siempre la carpeta correcta:
+Python
 import os
+import datetime
 
-# --- PASO 1: LOCALIZACIÓN AUTOMÁTICA ---
-# Cron no sabe en qué carpeta estás trabajando. 
-# 'os.path.abspath(__file__)' obtiene la ruta completa de este script.
-# 'os.path.dirname' nos da la carpeta que lo contiene.
+# --- SOLUCIÓN PROFESIONAL ---
+# 1. Averiguamos la carpeta donde está este script automáticamente
 ruta_del_script = os.path.dirname(os.path.abspath(__file__))
 
-# --- PASO 2: CONSTRUCCIÓN DE LA RUTA ---
-# Unimos la carpeta del script con el nombre del archivo deseado.
-# Esto asegura que el log se guarde AQUÍ y no en /home/usuario.
+# 2. Creamos la ruta completa pegando la carpeta con el nombre del archivo
 ruta_archivo_final = os.path.join(ruta_del_script, "modelo_ia.txt")
 
-# --- PASO 3: LÓGICA DE REGISTRO ---
-# Creamos un mensaje con la fecha y hora exacta del "entrenamiento".
+# 3. Registro del entrenamiento con marca de tiempo
 log_entry = f"Modelo actualizado con éxito el: {datetime.datetime.now()}\n"
 
-# --- PASO 4: ESCRITURA SEGURA ---
-# 'with open' cierra el archivo automáticamente al terminar, evitando bloqueos.
-# 'a' (append) significa que añade información al final sin borrar lo anterior.
 with open(ruta_archivo_final, "a") as f:
     f.write(log_entry)
 
-print(f"ÉXITO: Archivo guardado en {ruta_archivo_final}")
+print(f"ÉXITO: Guardado en {ruta_archivo_final}")
 ________________________________________
-⚙️ 4. Configuración de Cron (La "Agenda" de Linux)
-Para que el script se ejecute solo, debemos configurar el archivo Crontab:
-1.	Abrir el editor: Ejecuta crontab -e. (Si te pregunta, elige nano).
-2.	La línea de ejecución: Ve al final del archivo y pega esto exactamente:
-Bash
-* * * * * /usr/bin/python3 /mnt/c/Documents/projects/prueba_cron/entrenamiento_modelo.py >> /mnt/c/Documents/projects/prueba_cron/cron.log 2>&1
-3.	Desglose de la línea:
-o	* * * * *: Significa "Ejecutar cada minuto, de cada hora, de cada día".
-o	/usr/bin/python3: Ruta absoluta al intérprete de Python (Cron necesita saber dónde está el programa).
-o	>> cron.log: Guarda el historial de lo que imprime el script.
-o	2>&1: El Buzón de Errores. Envía cualquier fallo técnico al mismo archivo cron.log. Sin esto, estaríamos a ciegas.
-o	⚠️ NOTA VITAL: Debes pulsar ENTER después de esta línea para dejar una línea en blanco al final del archivo. Si no lo haces, Linux ignorará la instrucción.
+⚙️ 4. Configuración de la Tarea (Crontab)
+Para programar la ejecución cada minuto:
+1.	Ejecuta el comando: crontab -e.
+2.	Si te pide elegir editor, selecciona Nano (el más sencillo).
+3.	Pega esta línea al final del archivo (ajusta tu ruta de usuario):
+* * * * * /usr/bin/python3 /mnt/c/Documents/projects/prueba_cron/entrenamiento_modelo_ok.py >> /mnt/c/Documents/projects/prueba_cron/cron.log 2>&1
+¿Qué significa 2>&1?
+Es fundamental para la "autopsia". Redirige los errores de Python al archivo cron.log. Si el script tiene un fallo de sintaxis, lo verás escrito ahí. Sin esto, el error desaparece.
 ________________________________________
 🚨 5. Comandos de Emergencia y Monitoreo
-•	Ver en tiempo real: tail -f cron.log
-o	Uso: Es fundamental para la presentación. Permite ver cómo aparece una línea nueva cada minuto sin tocar nada.
-•	Reiniciar el motor: sudo service cron restart
-o	Uso: Si tras configurar todo no pasa nada, el motor de Cron puede estar "dormido".
-•	Ver historial completo: cat cron.log
-•	Comprobar si Cron vive: ps aux | grep cron
+•	Ver en tiempo real: tail -f cron.log (Úsalo en la demo para ver cómo aparece una línea nueva cada minuto).
+•	Ver historial completo: cat cron.log.
+•	Reiniciar motor: sudo service cron restart.
+•	¿Está vivo?: ps aux | grep cron.
 ________________________________________
-🧹 6. Protocolo de Limpieza Final (Importante)
-Al terminar la práctica, es responsabilidad del desarrollador dejar el sistema limpio:
-1.	Eliminar tareas: Ejecuta crontab -r. Esto borra todas tus automatizaciones para que el PC no siga trabajando innecesariamente.
-2.	Verificar: Ejecuta crontab -l. Debe salir el mensaje: no crontab for [tu_usuario].
-3.	Parar motor: sudo service cron stop.
-4.	Limpiar logs: Si el archivo de log es muy grande, vacíalo con > cron.log.
+🧹 6. Protocolo de Limpieza Final (Obligatorio)
+Para evitar que el sistema siga trabajando en segundo plano y consuma recursos innecesarios:
+1.	Borrar tareas: crontab -r.
+2.	Verificar: crontab -l (Debe decir "no crontab for user").
+3.	Parar servicio: sudo service cron stop.
+4.	Vaciar historial: > cron.log.
 ________________________________________
 Documentación elaborada por el Equipo de Investigadores ☺
-
-
+________________________________________
