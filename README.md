@@ -1,4 +1,4 @@
-# 🕵️‍♂️ Workshop: El Misterio de la Autopsia (Automatización con Cron)
+# 🕵️‍♂️ El Misterio de la Autopsia (Automatización con Cron)
 
 Esta guía documenta la investigación técnica sobre un script de IA que "desapareció" al ser automatizado. **Vamos a aprender** a usar el motor de Linux (Cron) para que nuestros procesos cobren vida propia.
 
