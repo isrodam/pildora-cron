@@ -108,3 +108,4 @@ sudo service cron stop
 
 **Nota final:** El archivo `ejecucion.log` es tu prueba de éxito. Si se llena de texto, ¡has dominado el tiempo!
 
+
